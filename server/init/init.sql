@@ -2,14 +2,6 @@
 CREATE DATABASE IF NOT EXISTS animal_coup 
 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-CREATE USER 'useranimalcoup1234'@'%' IDENTIFIED BY 'passanimalcoup1234';
-GRANT ALL PRIVILEGES ON *.* TO 'useranimalcoup1234'@'%' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-
-DROP USER 'root'@'%';
-DROP USER 'user'@'%';
-FLUSH PRIVILEGES;
-
 USE animal_coup;
 
 -- ตั้งค่า Timezone เป็น Asia/Bangkok
