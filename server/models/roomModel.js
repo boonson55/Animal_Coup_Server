@@ -15,7 +15,7 @@ const getRooms = async () => {
 
 const getRoomById = async (room_id) => {
     try {
-        const query = `SELECT rooms.room_status, rooms.pwd_room, users.user_id, users.player_name
+        const query = `SELECT rooms.room_status, rooms.pwd_room, rooms.play_status, users.user_id, users.player_name
         FROM rooms LEFT JOIN users ON rooms.user_id = users.user_id
         WHERE room_id = ?`;
         const [rows] = await db.query(query, [room_id]);
@@ -148,16 +148,15 @@ const updateCreator = async (user_id, room_id) => {
     }
 };
 
-const getRoomTimeOut = async (room_id) => {
+const getRoomTimeOut = async () => {
     try {
         const querySelect = `
-                SELECT * FROM rooms WHERE room_id = ?
-                AND play_status = "ยังไม่เริ่มเกม"
-                AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= 
-                (SELECT config_value FROM configs WHERE config_name = 'close_time')
+            SELECT room_id FROM rooms WHERE play_status = "ยังไม่เริ่มเกม"
+            AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) >= 
+            (SELECT config_value FROM configs WHERE config_name = 'close_time')
         `;
-        const [row] = await db.query(querySelect, [room_id]);
-        return row.length > 0 ? row[0] : null;
+        const [rows] = await db.query(querySelect);
+        return rows.length > 0 ? rows : [];
     } catch (error) {
         console.error('เกิดข้อผิดพลาดของฐานข้อมูล (ตรวจสอบห้องหมดเวลา):', error.message);
         throw new Error('ไม่สามารถตรวจสอบห้องหมดเวลาได้');

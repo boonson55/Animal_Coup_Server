@@ -19,15 +19,15 @@ CREATE TABLE users (
     last_login TIMESTAMP NULL DEFAULT NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-INSERT INTO users (player_name, username, password, email, permission) VALUES ('admin', 'admin', '$argon2id$v=19$m=65536,t=3,p=1$yCMjF/VcQBDd0aDBcYQ8Eg$x0vjZdQcSCLij8WHtgPJZhkAbZQd7nOvCU7qDYHZKls', 'admin@admin.com', 'admin');
-INSERT INTO users (player_name, username, password, email, permission) VALUES ('admin2', 'admin2', '$argon2id$v=19$m=65536,t=3,p=1$yCMjF/VcQBDd0aDBcYQ8Eg$x0vjZdQcSCLij8WHtgPJZhkAbZQd7nOvCU7qDYHZKls', 'admin2@admin2.com', 'admin');
-INSERT INTO users (player_name, username, password, email, permission) VALUES ('admin3', 'admin3', '$argon2id$v=19$m=65536,t=3,p=1$yCMjF/VcQBDd0aDBcYQ8Eg$x0vjZdQcSCLij8WHtgPJZhkAbZQd7nOvCU7qDYHZKls', 'admin3@admin3.com', 'admin');
-INSERT INTO users (player_name, username, password, email, permission) VALUES ('test', 'test', '$argon2id$v=19$m=65536,t=3,p=1$ZLzLRa17Zhe4AjF8LMVPJg$mPfvsqYINEKb7wIICShELJmN/0iZBtfoWTXZz4jt8Ws', 'test@test.com', 'member');
-INSERT INTO users (player_name, username, password, email, permission) VALUES ('member', 'member', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member@member.com', 'member');
+INSERT INTO users (player_name, username, password, email, permission) VALUES ('admin', 'admin', '$argon2id$v=19$m=65536,t=3,p=1$/NR4zIQrcJ1OC3Ew+anjtw$xx9Vr347xb6iCQRK5oawJ9QFyW0Dh2HPsZZC6WJt2YA', 'admin@admin.com', 'admin');
+INSERT INTO users (player_name, username, password, email, permission) VALUES ('admin2', 'admin2', '$argon2id$v=19$m=65536,t=3,p=1$/NR4zIQrcJ1OC3Ew+anjtw$xx9Vr347xb6iCQRK5oawJ9QFyW0Dh2HPsZZC6WJt2YA', 'admin2@admin2.com', 'admin');
+INSERT INTO users (player_name, username, password, email, permission) VALUES ('admin3', 'admin3', '$argon2id$v=19$m=65536,t=3,p=1$/NR4zIQrcJ1OC3Ew+anjtw$xx9Vr347xb6iCQRK5oawJ9QFyW0Dh2HPsZZC6WJt2YA', 'admin3@admin3.com', 'admin');
+INSERT INTO users (player_name, username, password, email, permission) VALUES ('member1', 'member1', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member1@member1.com', 'member');
 INSERT INTO users (player_name, username, password, email, permission) VALUES ('member2', 'member2', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member2@member2.com', 'member');
 INSERT INTO users (player_name, username, password, email, permission) VALUES ('member3', 'member3', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member3@member3.com', 'member');
 INSERT INTO users (player_name, username, password, email, permission) VALUES ('member4', 'member4', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member4@member4.com', 'member');
 INSERT INTO users (player_name, username, password, email, permission) VALUES ('member5', 'member5', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member5@member5.com', 'member');
+INSERT INTO users (player_name, username, password, email, permission) VALUES ('member6', 'member6', '$argon2id$v=19$m=65536,t=3,p=1$NzEYf/+2qSIBL6Ru7kcdIQ$0PAw8qr96amAkNGyZnGcDSnsSYhY28b2ELh2/9/8IP0', 'member6@member6.com', 'member');
 
 -- ตาราง user_stats
 CREATE TABLE user_stats (
@@ -37,11 +37,12 @@ CREATE TABLE user_stats (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('3','5','4');
-INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('4','4','2');
-INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('5','5','3');
-INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('6','6','1');
-INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('7','3','1');
+INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('4','0','0');
+INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('5','0','0');
+INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('6','0','0');
+INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('7','0','0');
+INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('8','0','0');
+INSERT INTO user_stats (user_id, game_count, game_win) VALUES ('9','0','0');
 
 -- ตาราง user_bans
 CREATE TABLE user_bans (
@@ -50,11 +51,12 @@ CREATE TABLE user_bans (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-INSERT INTO user_bans (user_id) VALUES ('3');
 INSERT INTO user_bans (user_id) VALUES ('4');
 INSERT INTO user_bans (user_id) VALUES ('5');
 INSERT INTO user_bans (user_id) VALUES ('6');
 INSERT INTO user_bans (user_id) VALUES ('7');
+INSERT INTO user_bans (user_id) VALUES ('8');
+INSERT INTO user_bans (user_id) VALUES ('9');
 
 -- ตาราง banned_lists
 CREATE TABLE banned_lists (
@@ -101,7 +103,7 @@ CREATE TABLE configs (
     config_value VARCHAR(20) DEFAULT NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-INSERT INTO configs (config_name, config_value) VALUES ('close_time', '30');
+INSERT INTO configs (config_name, config_value) VALUES ('close_time', '10');
 INSERT INTO configs (config_name, config_value) VALUES ('turn_time', '60');
 INSERT INTO configs (config_name, config_value) VALUES ('popup_time', '30');
 INSERT INTO configs (config_name, config_value) VALUES ('ban_time', '30');

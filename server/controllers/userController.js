@@ -1,4 +1,4 @@
-const { getAllMembers, getAllAdmins, getAdminProfile, updateUserProfile, findUserByUsernameOrEmail, findUserByPlayerName, findUserByUsername, findUserByEmail, registerAdmin, registerUser, updateResetPassword, getLeaderboards, findUserStat, findUserById, updateUsage, updateUnbans, getMemberBan, getProtectBan, updateAdminBan, deleteAdmin, deleteMember, updateUnban, newResetPassword } = require('../models/userModel');
+const { getAllMembers, getAllAdmins, getAdminProfile, updateUserProfile, findUserByUsernameOrEmail, findUserByPlayerName, findUserByUsername, findUserByEmail, registerAdmin, registerUser, updateResetPassword, getLeaderboards, findUserStat, findUserById, updateUsage, updateUnbans, getMemberBan, getProtectBan, updateAdminBan, deleteAdmin, deleteMember, newResetPassword } = require('../models/userModel');
 const { sendOTP, sendPassword, verifyOTP, deleteOTP } = require('../utils/otpService');
 
 exports.getAllMembers = async (req, res) => {
@@ -84,25 +84,8 @@ exports.getMemberBan = async (req, res) => {
 exports.updateUnbans = async (req, res) => {
     try {
         await updateUnbans();
-        res.status(200).json({ message: 'อัปเดตรายการปลดแบนสำเร็จ' });
     } catch (error) {
         console.error('เกิดข้อผิดพลาดในการอัปเดตรายการปลดแบน:', error.message);
-        res.status(500).json({ error: 'ไม่สามารถอัปเดตรายการปลดแบนได้' });
-    }
-};
-
-exports.updateUnban = async (req, res) => {
-    try {
-        const user_id = req.user.id;
-
-        if (!user_id) {
-            return res.status(400).json({ error: 'กรุณาระบุหมายเลขผู้ใช้' });
-        }
-        await updateUnban(user_id);
-        res.status(200).json({ message: 'ปลดแบนผู้ใช้สำเร็จ' });
-    } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการปลดแบนผู้ใช้:', error.message);
-        res.status(500).json({ error: 'ไม่สามารถปลดแบนผู้ใช้ได้' });
     }
 };
 

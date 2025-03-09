@@ -26,9 +26,8 @@ exports.loginUser = async (req, res) => {
         const token = generateToken(user);
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'None',
-            // domain: '.yourdomain.com',
+            secure: true, //false
+            sameSite: 'None', //'Strict'
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 วัน
         });
 
@@ -37,7 +36,6 @@ exports.loginUser = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
-            // domain: '.yourdomain.com',
             maxAge: 15 * 24 * 60 * 60 * 1000 // 15 วัน
         });
 
@@ -54,13 +52,11 @@ exports.logoutUser = (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
-            // domain: '.yourdomain.com',
         });
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
-            // domain: '.yourdomain.com',
         });
 
         res.status(200).json({ message: 'ออกจากระบบสำเร็จ' });
@@ -86,13 +82,11 @@ exports.checkRole = async (req, res) => {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'None',
-                // domain: '.yourdomain.com',
             });
             res.clearCookie('refreshToken', {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'None',
-                // domain: '.yourdomain.com',
             });
             return res.status(200).json({
                 isAuthenticated: false,

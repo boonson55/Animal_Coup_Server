@@ -48,34 +48,41 @@ const socketioMiddleware = (io) => {
 
         socket.on("updateStatus", ({ user_id, room_id, game_id }) => {
             statusUsers[user_id] = { room_id, game_id };
-            // console.log(`อัปเดตสถานะของ ${user_id}:`, statusUsers[user_id]);
         });
 
         socket.on("leaveStatus", (user_id) => {
             if (statusUsers[user_id]) {
                 delete statusUsers[user_id];
-                // console.log(`อัปเดตสถานะผู้ใช้ ${user_id} ออกจากระบบแล้ว`);
             }
         });
 
         socket.on("getUserStatus", async (user_id, callback) => {
-            if (!statusUsers[user_id]) {
+            const userStatus = statusUsers[user_id];
+
+            if (!userStatus) {
                 return callback(null);
             }
-            const { room_id } = statusUsers[user_id];
+
+            const { room_id, game_id } = userStatus;
+
             if (!room_id) {
                 delete statusUsers[user_id];
                 return callback(null);
             }
-            const [room] = await Promise.all([
-                getRoomById(room_id)
-            ]);
-            if (room) {
-                return callback(statusUsers[user_id]);
-            } else {
+
+            const room = await getRoomById(room_id);
+            if (room?.play_status === "เริ่มเกมแล้ว" && !game_id) {
+                const game_id = await getGameById(room_id);
+                if (game_id) {
+                    statusUsers[user_id] = { room_id, game_id };
+                    return callback(statusUsers[user_id]);
+                }
+            } else if (room?.play_status === "จบเกมแล้ว") {
                 delete statusUsers[user_id];
                 return callback(null);
             }
+
+            return callback(room ? statusUsers[user_id] : null);
         });
 
         socket.on('getOnlineUsers', () => {
@@ -125,6 +132,13 @@ const socketioMiddleware = (io) => {
         socket.on("requestCountdown", (room_id) => {
             if (activeIntervals[`countdown_${room_id}_time`]) {
                 socket.emit("countdownUpdate", { timeLeft: activeIntervals[`countdown_${room_id}_time`] });
+            }
+        });
+
+        socket.on("requestCountdownStopped", (room_id) => {
+            if (activeIntervals[`countdown_${room_id}_time`]) {
+                stopCountdownTimer(room_id);
+                io.to(room_id).emit("countdownStopped");
             }
         });
 
@@ -183,7 +197,7 @@ const socketioMiddleware = (io) => {
                     return socket.emit("updateGame", { error: "ไม่มีผู้เล่นในห้องนี้" });
                 }
 
-                let deck = ['cat', 'cat', 'cat', 'lion', 'lion', 'lion', 'bear', 'bear', 'bear', 'turtle', 'turtle', 'turtle', 'crocodile', 'crocodile', 'crocodile'];
+                let deck = ['cat', 'lion', 'bear', 'turtle', 'crocodile', 'cat', 'lion', 'bear', 'turtle', 'crocodile', 'cat', 'lion', 'bear', 'turtle', 'crocodile'];
                 let background = ['bgCat', 'bgLion', 'bgBear', 'bgTurtle', 'bgCrocodile'];
 
                 shuffleArray(deck);
@@ -196,8 +210,7 @@ const socketioMiddleware = (io) => {
                     cards: deck.splice(0, 2),
                     status: "alive",
                     banStack: 0,
-                    isWin: false,
-                    leave: false
+                    isWin: false
                 }));
                 activeGames[game_id] = {
                     room_id,
@@ -240,7 +253,7 @@ const socketioMiddleware = (io) => {
             if (!player) return;
 
             if (type === "leave") {
-                player.leave = true;
+                game.players = game.players.filter(player => player.user_id !== user_id);
                 io.to(game_id).emit("updateGame", game);
                 await updateStatLose(player.user_id);
             }
@@ -385,7 +398,7 @@ const socketioMiddleware = (io) => {
             const targetPlayer = game.players.find(p => p.user_id === target_id);
 
             if (!player || !targetPlayer || player.status !== "alive" || targetPlayer.status !== "alive") return;
-            if (game.state.currentTurn !== user_id || targetPlayer.coin <= 0) return;
+            if (game.state.currentTurn !== user_id || player.coin < 3) return;
 
             stopTurnTimer(game_id);
             addHistory(io, game, game_id, `${player.player_name}: ใช้ความสามารถ ลอบสังหาร กับ ${targetPlayer.player_name}`);
@@ -622,7 +635,7 @@ const socketioMiddleware = (io) => {
 
             game.state.popupTime = game.state.defaultPopupTime;
             game.state.lastChallenger = challenger_id;
-
+            addHistory(io, game, game_id, `${challenger.player_name}: ท้าทาย ${targetPlayer.player_name}`);
             io.to(game_id).emit("chooseCardShow", { user_id: targetPlayer.user_id });
             io.to(game_id).emit("updateGame", game);
         });
@@ -890,11 +903,10 @@ const startVoteTimer = async (io, game_id) => {
         game.state.voteTimer -= 1;
         io.to(game_id).emit("updateGame", game);
 
-        const nonLeavePlayers = game.players.filter(p => p.leave === false);
-        const winner = nonLeavePlayers.find(p => p.isWin === true);
-        const losers = nonLeavePlayers.filter(p => p.isWin === false);
+        const winner = game.players.find(p => p.isWin === true);
+        const losers = game.players.filter(p => p.isWin === false);
 
-        if (game.state.passedPlayers.length === nonLeavePlayers.length) {
+        if (game.state.passedPlayers.length === game.players.length) {
             stopVoteTimer(game_id);
             stopTurnTimer(game_id);
             stopPopupTimer(game_id);
@@ -909,7 +921,7 @@ const startVoteTimer = async (io, game_id) => {
                 await updateStatLose(player.user_id);
             }
 
-            const { newRoomId, newGameId } = await insertNewGame(winner, nonLeavePlayers);
+            const { newRoomId, newGameId } = await insertNewGame(winner, game.players);
 
             io.to(game_id).emit("redirectToNewGame", { room_id: newRoomId, game_id: newGameId });
 

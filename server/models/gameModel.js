@@ -11,11 +11,11 @@ const getGameCounts = async () => {
     }
 };
 
-const getGameById = async (game_id) => {
+const getGameById = async (room_id) => {
     try {
-        const query = 'SELECT game_id FROM games WHERE game_id = ?';
-        const [rows] = await db.query(query, [game_id]);
-        return rows.length > 0 ? rows[0] : null;
+        const query = 'SELECT game_id FROM games WHERE room_id = ?';
+        const [rows] = await db.query(query, [room_id]);
+        return rows.length > 0 ? rows[0].game_id : null;
     } catch (error) {
         console.error('เกิดข้อผิดพลาดของฐานข้อมูล (ดึงจำนวนเกมทั้งหมด):', error.message);
         throw new Error('ไม่สามารถดึงจำนวนเกมทั้งหมดได้');

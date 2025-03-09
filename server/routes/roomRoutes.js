@@ -4,8 +4,8 @@ const roomController = require('../controllers/roomController');
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 
 router.get('/rooms', verifyToken, roomController.getRooms);
-router.post('/room/join', verifyToken, requireRole('member'), roomController.joinRoom);
 router.get('/room/:id', verifyToken, requireRole('member'), roomController.getRoomById);
+router.post('/room/join', verifyToken, requireRole('member'), roomController.joinRoom);
 router.post('/room/insert', verifyToken, requireRole('member'), roomController.insertRoom);
 router.post('/room/banInRoom', verifyToken, requireRole('admin'), roomController.getUserBanInRoom);
 router.post('/room/banInGame', verifyToken, requireRole('admin'), roomController.getUserBanInGame);

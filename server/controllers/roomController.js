@@ -147,32 +147,34 @@ exports.deleteRoom = async (req, res) => {
     }
 };
 
-exports.deleteRoomTimeOut = async (io, room_id) => {
+exports.deleteRoomTimeOut = async (io) => {
     try {
-        const expiredRoom = await getRoomTimeOut(room_id);
-        if (!expiredRoom) {
+        const expiredRooms = await getRoomTimeOut();
+        if (!expiredRooms || expiredRooms.length === 0) {
             return;
         }
 
-        const players = await getRoomPlayers(room_id);
-        await deleteRoomTimeOut(room_id);
+        for (const expiredRoom of expiredRooms) {
+            const players = await getRoomPlayers(expiredRoom.room_id);
+            await deleteRoomTimeOut(expiredRoom.room_id);
 
-        players.forEach(player => {
-            if (onlineUsers[player.user_id]) {
-                io.to(onlineUsers[player.user_id]).emit("roomTimeout");
-            }
-        });
+            players.forEach(player => {
+                if (onlineUsers[player.user_id]) {
+                    io.to(onlineUsers[player.user_id]).emit("roomTimeout");
+                }
+            });
 
-        for (const user_id in statusUsers) {
-            if (statusUsers[user_id] && statusUsers[user_id].room_id === String(room_id)) {
-                delete statusUsers[user_id];
+            for (const user_id in statusUsers) {
+                if (statusUsers[user_id] && statusUsers[user_id].room_id === String(expiredRoom.room_id)) {
+                    delete statusUsers[user_id];
+                }
             }
         }
 
         const updatedRooms = await getRooms();
         io.emit('roomsUpdate', updatedRooms);
     } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการลบห้องเนื่องจากหมดเวลา:', error.message);
+        console.error('เกิดข้อผิดพลาดในการลบห้องที่หมดเวลาโดยอัตโนมัติ:', error.message);
     }
 };
 

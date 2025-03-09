@@ -105,7 +105,7 @@ const updateUnbans = async () => {
     try {
         const [expiredBans] = await db.query(`SELECT user_id FROM banned_lists WHERE unban_date < NOW()`);
 
-        if (expiredBans.length === 0) {
+        if (!expiredBans || expiredBans.length === 0) {
             return { message: "ไม่พบรายการปลดแบนที่หมดอายุ" };
         }
 
@@ -118,22 +118,6 @@ const updateUnbans = async () => {
     } catch (error) {
         console.error('เกิดข้อผิดพลาดของฐานข้อมูล (อัปเดตรายการปลดแบนทั้งหมด):', error.message);
         throw new Error('ไม่สามารถอัปเดตรายการปลดแบน');
-    }
-};
-
-const updateUnban = async (user_id) => {
-    try {
-        const querySel = `SELECT * FROM banned_lists WHERE unban_date < NOW() AND user_id = ?`;
-        const [result] = await db.query(querySel, [user_id]);
-        if (result.length > 0) {
-            const queryDel = 'DELETE FROM banned_lists WHERE user_id = ?';
-            await db.query(queryDel, [user_id]);
-            const queryUp = 'UPDATE user_bans SET ban_status = 0 WHERE user_id = ?';
-            await db.query(queryUp, [user_id]);
-        }
-    } catch (error) {
-        console.error('เกิดข้อผิดพลาดของฐานข้อมูล (ปลดแบนผู้ใช้):', error.message);
-        throw new Error('ไม่สามารถดำเนินการปลดแบนผู้ใช้');
     }
 };
 
@@ -204,7 +188,7 @@ const getLeaderboards = async () => {
     try {
         const query = `SELECT u.player_name, s.game_count, s.game_win 
         FROM user_stats s LEFT JOIN users u ON s.user_id = u.user_id
-        WHERE s.game_count > 0
+        WHERE s.game_win > 0
         ORDER BY s.game_win DESC LIMIT 10
         `;
         const [rows] = await db.query(query);
@@ -408,4 +392,4 @@ const updateStatWin = async (user_id) => {
     }
 };
 
-module.exports = { getAllMembers, getAllAdmins, getAdminProfile, findUserByUsernameOrEmail, findUserByPlayerName, findUserByUsername, findUserByEmail, registerAdmin, updateUnbans, registerUser, verifyPassword, updateLastLogin, updateResetPassword, getLeaderboards, findUserStat, getMemberBan, updateUserProfile, findUserById, updateUsage, updateAdminBan, updateMemberBan, updateBanInGame, getProtectBan, deleteAdmin, deleteMember, newResetPassword, updateUnban, updateStatLose, updateStatWin };
+module.exports = { getAllMembers, getAllAdmins, getAdminProfile, findUserByUsernameOrEmail, findUserByPlayerName, findUserByUsername, findUserByEmail, registerAdmin, updateUnbans, registerUser, verifyPassword, updateLastLogin, updateResetPassword, getLeaderboards, findUserStat, getMemberBan, updateUserProfile, findUserById, updateUsage, updateAdminBan, updateMemberBan, updateBanInGame, getProtectBan, deleteAdmin, deleteMember, newResetPassword, updateStatLose, updateStatWin };

@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const gameRoutes = require('./routes/gameRoutes');
 const configRoutes = require('./routes/configRoutes');
+const userController = require('./controllers/userController');
 const roomController = require('./controllers/roomController');
 const { socketioMiddleware } = require('./middleware/socketioMiddleware');
 const { Server } = require('socket.io');
@@ -18,14 +19,14 @@ const http = require('http');
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 8000;
+app.set("trust proxy", 1);
 
 const origins = [
-    "http://localhost:3000",
+    "http://localhost:5173",
     "http://localhost:8000",
 ];
 app.use(
     cors({
-        credentials: true,
         origin: (origin, callback) => {
             if (!origin || origins.includes(origin)) {
                 callback(null, true);
@@ -34,6 +35,7 @@ app.use(
                 callback(new Error("การตั้งค่า CORS ไม่อนุญาตให้เข้าถึง"));
             }
         },
+        credentials: true
     })
 );
 
@@ -55,12 +57,10 @@ app.use('/api', configRoutes);
 
 setInterval(async () => {
     try {
-        const rooms = await roomController.getRoomsServer();
-        for (const room of rooms) {
-            await roomController.deleteRoomTimeOut(io, room.room_id);
-        }
+        await userController.updateUnbans();
+        await roomController.deleteRoomTimeOut(io);
     } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการลบห้องที่หมดเวลาโดยอัตโนมัติ:', error.message);
+        console.error('เกิดข้อผิดพลาดในการปลดแบนและลบห้องที่หมดเวลาโดยอัตโนมัติ:', error.message);
     }
 }, 60000); // ทำงานทุก 60 วินาที
 
