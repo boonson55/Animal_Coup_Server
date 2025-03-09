@@ -12,7 +12,6 @@ const userController = require('./controllers/userController');
 const roomController = require('./controllers/roomController');
 const { socketioMiddleware } = require('./middleware/socketioMiddleware');
 const { Server } = require('socket.io');
-require('dotenv').config();
 
 const app = express();
 const http = require('http');

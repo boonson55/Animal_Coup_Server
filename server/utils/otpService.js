@@ -1,7 +1,5 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-require('dotenv').config();
-
 const otpStore = new Map();
 const otpExpiryTime = 3 * 60 * 1000; // 3 นาที
 
