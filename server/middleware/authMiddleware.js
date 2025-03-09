@@ -1,4 +1,3 @@
-const { findUserById } = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 
 const verifyGuest = (req, res, next) => {
