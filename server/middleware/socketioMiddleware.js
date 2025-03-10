@@ -338,7 +338,7 @@ const socketioMiddleware = (io) => {
 
             startPopupTimer(io, game_id, () => {
                 if (game.state.currentAction.blocked) {
-                    addHistory(io, game, game_id, `${player.player_name}: ขอ 2 เหรียญไม่สำเร็จ ถูกป้องกันโดย สิงโต`);
+                    addHistory(io, game, game_id, `${player.player_name}: ขอ 2 เหรียญไม่สำเร็จ ถูกขัดขวางโดย สิงโต`);
                 } else {
                     player.coin += 2;
                     addHistory(io, game, game_id, `${player.player_name}: ได้รับ 2 เหรียญ`);
@@ -597,7 +597,7 @@ const socketioMiddleware = (io) => {
             game.state.currentAction.blockedBy = blocker.user_id;
 
             if (blockedAction === "foreignAid") {
-                addHistory(io, game, game_id, `${blocker.player_name}: ป้องกัน การขอ 2 เหรียญ โดย สิงโต`);
+                addHistory(io, game, game_id, `${blocker.player_name}: ขัดขวาง การขอ 2 เหรียญ โดย สิงโต`);
             }
 
             if (blockedAction === "assassinate") {
